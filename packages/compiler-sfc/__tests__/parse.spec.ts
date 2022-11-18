@@ -312,6 +312,33 @@ h1 { color: red }
       ).toBe(0)
     })
 
+    test('different default lang for script & script setup', () => {
+      const { descriptor, errors } = parse(
+        `<script setup>const foo: string = 'bar'</script>
+        <script>console.log(1)</script>`,
+        {
+          defaultScriptLang: 'ts',
+          defaultScriptSetupLang: 'tsx'
+        }
+      )
+      expect(errors.length).toBe(0)
+      expect(descriptor.script?.lang).toBe('ts')
+      expect(descriptor.scriptSetup?.lang).toBe('tsx')
+    })
+
+    test('the same default lang for script & script setup', () => {
+      const { descriptor, errors } = parse(
+        `<script setup>const foo: string = 'bar'</script>
+        <script>console.log(1)</script>`,
+        {
+          defaultScriptLang: 'ts'
+        }
+      )
+      expect(errors.length).toBe(0)
+      expect(descriptor.script?.lang).toBe('ts')
+      expect(descriptor.scriptSetup?.lang).toBe('ts')
+    })
+
     // # 6676
     test('should throw error if no <template> or <script> is present', () => {
       assertWarning(
